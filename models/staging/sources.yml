@@ -1,0 +1,47 @@
+---
+version: 2
+sources:
+  - name: tpch_raw
+    database: SNOWFLAKE_SAMPLE_DATA
+    schema: TPCH_SF1
+    description: TPC-H sample data for wholesale analytics
+
+    tables:
+      - name: CUSTOMER
+        columns:
+          - name: C_CUSTKEY
+            tests:
+              - not_null
+              - unique
+      - name: ORDERS
+        freshness:
+          warn_after:
+            count: 18
+            period: minute
+          error_after:
+            count: 21
+            period: minute
+        loaded_at_field: convert_timezone('America/Los_Angeles', 'UTC',
+          O_ORDERDATE::TIMESTAMP_NTZ)
+          
+        columns:
+          - name: O_ORDERKEY
+            tests:
+              - not_null
+      - name: LINEITEM
+        columns:
+          - name: L_LINENUMBER
+            tests: 
+              - not_null
+          - name: L_ORDERKEY
+            tests:
+              - not_null
+      - name: PART
+        columns:
+          - name: P_PARTKEY
+            tests:
+              - not_null
+
+
+             
+      

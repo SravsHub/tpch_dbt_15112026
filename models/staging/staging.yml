@@ -1,0 +1,36 @@
+---
+version: 2
+models:
+  - name: stg_customers
+    description: "Cleans and standardizes raw customer data for downstream transformations"
+    columns:
+      - name: customer_key
+        tests:
+          - unique
+          - not_null
+      - name: customer_name
+        tests:
+          - not_null
+  - name: stg_orders
+    description: "Prepares order data by standardizing order details and ensuring consistent data types"
+    columns:
+      - name: order_key
+        tests:
+          - unique
+          - not_null
+      - name: order_status
+        tests:
+          - accepted_values:
+              values:
+                - O
+                - F
+                - P
+  - name: stg_lineitems
+    description: "Prepares line-item data by standardizing columns and calculating line-level values"
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - line_number
+            - order_key
+  - name: stg_parts
+    description: "Cleans and standardizes product information for downstream analysis"
